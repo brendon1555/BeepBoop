@@ -11,7 +11,6 @@ bot.add_cog(Jokes(bot))
 bot.add_cog(Gifs(bot))
 bot.add_cog(Utils(bot))
 
-
 @bot.event
 async def on_ready():
     print('Logged in as:\n{0} (ID: {0.id})'.format(bot.user))
@@ -21,7 +20,7 @@ async def on_ready():
 @bot.event
 async def on_member_join(member):
     server = member.server
-    fmt = '{} who dis?!'
+    fmt = '@{} who dis?!'
     await bot.send_message(server, fmt.format(member))
 
 if __name__ == "__main__":

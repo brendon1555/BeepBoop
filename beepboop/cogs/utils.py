@@ -4,6 +4,10 @@ from gtts import gTTS
 import asyncio
 from beepboop import Base
 import os
+import sys
+from discord import Embed
+import discord
+from random import choice
 
 
 class Utils(Base):
@@ -25,7 +29,8 @@ class Utils(Base):
 
         await self.bot.say("Been up for {} hours, {} minutes and {} seconds".format(hours, minutes, seconds))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.has_permissions(administrator=True)
+    @commands.command(pass_context=True, no_pm=True, hidden=True)
     async def say(self, ctx, *, message):
         """Ignore this"""
         if ctx.message.author.id == '141480928995311616':
@@ -65,3 +70,25 @@ class Utils(Base):
             fut = asyncio.run_coroutine_threadsafe(message, self.bot.loop)
             fut.result()
 
+    @commands.command(pass_context=True, no_pm=True)
+    async def stats(self, ctx):
+        """A few stats."""
+        # get_owner = bot.get_user_info(config['ownerid'])
+        statInfo = await self.bot.application_info()
+        statEmbed = Embed(title='Stats', description='This bot is powered by [BeepBoop](https://github.com/brendon1555/BeepBoop).', colour=0x690E8)
+        statEmbed.add_field(name='Owner', value=statInfo.owner.mention + '('
+                                                + str(statInfo.owner) + ' - ID: ' + str(statInfo.owner.id) + ')')
+        statEmbed.add_field(name='Python', value=sys.version)
+        statEmbed.add_field(name='discord.py', value=discord.__version__)
+        # statEmbed.add_field(name='Servers', value=len(self.bot.))
+        statPool = ['What have you done now?', 'Why should I do this again?', 'Oh..',
+                    'Where did the RAM go?', 'grumble grumble', 'Please hold.', 'No, just, no.',
+                    'Have you tried rebooting?', 'memework makes the dreamwork!']
+        statEmbed.set_footer(text=choice(statPool))
+        try:
+            await self.bot.say(embed=statEmbed)
+        except:
+            await self.bot.say('Sorry, I can\'t send the Embed.')
+            await self.bot.say('Maybe I don\'t have Embed Links permission?')
+        else:
+            pass

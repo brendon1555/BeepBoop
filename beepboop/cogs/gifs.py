@@ -12,18 +12,19 @@ class Gifs(Base):
 
     @commands.command(pass_context=True, no_pm=True)
     async def cat(self, ctx):
-        cat_gif = self.giphy.random_gif(tag="cute cat")
-        await self.bot.say(cat_gif.url)
+        await self._get_gif(ctx, "cute cat")
 
     @commands.command(pass_context=True, no_pm=True)
     async def come(self, ctx):
-        come_gif = self.giphy.random_gif(tag="come over")
-        await self.bot.say(come_gif.url)
+        await self._get_gif(ctx, "come over")
 
     @commands.command(pass_context=True, no_pm=True)
     async def gif(self, ctx, *, tags=None):
         if tags is None:
             await self.bot.say("Gotta give some tags")
         else:
-            tag_gif = self.giphy.random_gif(tag=tags)
-            await self.bot.say(tag_gif.url)
+            await self._get_gif(ctx, tags)
+
+    async def _get_gif(self, ctx, tags):
+        tag_gif = self.giphy.random_gif(tag=tags)
+        await self.bot.say(tag_gif.url)
