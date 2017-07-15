@@ -4,7 +4,8 @@ requirements = [
     'discord.py[voice]',
     'gtts',
     'giphypop',
-    'psutil'
+    'psutil',
+    'lxml'
 ]
 
 version = '0.0.3'

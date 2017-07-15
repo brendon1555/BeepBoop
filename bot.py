@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from datetime import datetime
+import aiohttp
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -12,7 +13,8 @@ extensions = [
     'beepboop.cogs.jokes',
     'beepboop.cogs.music',
     'beepboop.cogs.utils',
-    'beepboop.cogs.fun'
+    'beepboop.cogs.fun',
+    'beepboop.cogs.google'
 ]
 
 
@@ -23,7 +25,7 @@ async def on_ready():
     bot.uptime = datetime.now()
     bot.game = None
     bot.icount = bot.command_count = 0
-
+    bot.session = aiohttp.ClientSession(loop=bot.loop)
 
 @bot.event
 async def on_command_error(error, ctx):

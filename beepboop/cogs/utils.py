@@ -4,10 +4,8 @@ from gtts import gTTS
 import asyncio
 from beepboop import Base, Checks
 import os
-import sys
-from discord import Embed
 import discord
-from random import choice
+import logging
 
 
 class Utils(Base):

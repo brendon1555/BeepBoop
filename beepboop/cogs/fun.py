@@ -2,6 +2,7 @@ from discord.ext import commands
 from random import choice, randint
 from beepboop import Base
 import discord
+import logging
 
 
 class Fun(Base):
@@ -58,7 +59,7 @@ class Fun(Base):
         """Picks randomly from the options provided separated by |"""
         await self.bot.say('I choose: {}'.format(choice(msg.split("|"))))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command(pass_context=True, no_pm=True, aliases=["huge"])
     async def big(self, ctx, *, msg):
         """Replace letters with emojis"""
         msg = list(msg)
