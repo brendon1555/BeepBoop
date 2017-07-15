@@ -25,6 +25,10 @@ class Gifs(Base):
         else:
             await self._get_gif(ctx, tags)
 
-    async def _get_gif(self, ctx, tags):
+    async def _get_gif(self, ctx, tags: str):
         tag_gif = self.giphy.random_gif(tag=tags)
         await self.bot.say(tag_gif.url)
+
+
+def setup(bot):
+    bot.add_cog(Gifs(bot))

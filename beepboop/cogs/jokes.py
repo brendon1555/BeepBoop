@@ -54,3 +54,7 @@ class Jokes(Base):
             message = self.bot.send_message(ctx.message.channel, fmt.format(type(e).__name__, e))
             fut = asyncio.run_coroutine_threadsafe(message, self.bot.loop)
             fut.result()
+
+
+def setup(bot):
+    bot.add_cog(Jokes(bot))
