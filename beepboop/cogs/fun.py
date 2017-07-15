@@ -64,7 +64,7 @@ class Fun(Base):
         """Replace letters with emojis"""
         msg = list(msg)
         regional_list = [self.regionals[x.lower()] if x.isalnum() or x == '!' or x == '?' else x for x in msg]
-        regional_output = '  '.join(regional_list)
+        regional_output = ' '.join(regional_list)
         await self.bot.send_message(ctx.message.channel, regional_output)
 
 

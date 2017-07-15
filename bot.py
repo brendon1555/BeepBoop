@@ -4,7 +4,7 @@ from datetime import datetime
 import aiohttp
 
 import logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 bot = commands.Bot(command_prefix=commands.when_mentioned_or('!!'), description='Beep Boop')
 
@@ -27,12 +27,12 @@ async def on_ready():
     bot.icount = bot.command_count = 0
     bot.session = aiohttp.ClientSession(loop=bot.loop)
 
-@bot.event
-async def on_command_error(error, ctx):
-    if isinstance(error, commands.errors.MissingRequiredArgument):
-        formatter = commands.formatter.HelpFormatter()
-        await bot.send_message(ctx.message.channel, "{} You are missing required arguments.\n{}".format(ctx.message.author.mention, formatter.format_help_for(ctx, ctx.command)[0]))
-
+# @bot.event
+# async def on_command_error(error, ctx):
+#     if isinstance(error, commands.errors.MissingRequiredArgument):
+#         formatter = commands.formatter.HelpFormatter()
+#         await bot.send_message(ctx.message.channel, "{} You are missing required arguments.\n{}".format(ctx.message.author.mention, formatter.format_help_for(ctx, ctx.command)[0]))
+#
 
 @bot.event
 async def on_member_join(member):
