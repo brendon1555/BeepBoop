@@ -36,6 +36,7 @@ class Fun(Base):
                           '0': '0⃣', '1': '1⃣', '2': '2⃣', '3': '3⃣',
                           '4': '4⃣', '5': '5⃣', '6': '6⃣', '7': '7⃣', '8': '8⃣', '9': '9⃣', '!': '\u2757',
                           '?': '\u2753'}
+        self.kaomoji = {'tableflip': '(╯°□°）╯︵ ┻━┻', 'tableset': '┬──┬ ノ( ゜-゜ノ)'}
 
     @commands.command(pass_context=True, no_pm=True, aliases=['8ball'])
     async def ball8(self, ctx, *, msg: str):
@@ -66,6 +67,15 @@ class Fun(Base):
         regional_list = [self.regionals[x.lower()] if x.isalnum() or x == '!' or x == '?' else x for x in msg]
         regional_output = ' '.join(regional_list)
         await self.bot.send_message(ctx.message.channel, regional_output)
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def flip(self, ctx):
+        print("in flip")
+        await self.bot.say(self.kaomoji['tableflip'])
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def unflip(self, ctx):
+        await self.bot.say(self.kaomoji['tableset'])
 
 
 def setup(bot):
