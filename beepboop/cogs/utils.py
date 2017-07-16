@@ -226,6 +226,46 @@ class Utils(Base):
                     l -= 1
             await self.bot.say('Reloaded {} of {} modules.'.format(l, len(utils)))
 
+    @commands.check(Checks.is_owner)
+    @commands.command(pass_context=True)
+    async def messagedump(self, ctx, limit, filename, details="yes", reverse="no"):
+        """Dump messages."""
+        await self.bot.delete_message(ctx.message)
+        await self.bot.send_message(ctx.message.channel, "Downloading messages...")
+        if not os.path.isdir('message_dump'):
+            os.mkdir('message_dump')
+        with open("message_dump/" + filename.rsplit('.', 1)[0] + ".txt", "wb+") as f:
+            if reverse == "yes":
+                if details == "yes":
+                    async for message in self.bot.logs_from(ctx.message.channel, int(limit)):
+                        content = message.content
+                        for attachment in message.attachments:
+                            print(attachment)
+                            content += ("\n" + attachment['url'])
+                        f.write("<{} at {}> {}\n".format(message.author.name, message.timestamp.strftime('%d %b %Y'), content).encode())
+
+                else:
+                    async for message in self.bot.logs_from(ctx.message.channel, int(limit)):
+                        content = message.content
+                        for attachment in message.attachments:
+                            content += ("\n" + attachment['url'])
+                        f.write(content.encode() + "\n".encode())
+            else:
+                if details == "yes":
+                    async for message in self.bot.logs_from(ctx.message.channel, int(limit), reverse=True):
+                        content = message.content
+                        for attachment in message.attachments:
+                            content += ("\n" + attachment['url'])
+                        f.write("<{} at {}> {}\n".format(message.author.name, message.timestamp.strftime('%d %b %Y'), content).encode())
+
+                else:
+                    async for message in self.bot.logs_from(ctx.message.channel, int(limit), reverse=True):
+                        content = message.content
+                        for attachment in message.attachments:
+                            content += ("\n" + attachment['url'])
+                        f.write(content.encode() + "\n".encode())
+        await self.bot.send_message(ctx.message.channel, "Finished downloading!")
+
 
 def setup(bot):
     bot.add_cog(Utils(bot))

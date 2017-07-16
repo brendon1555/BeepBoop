@@ -100,3 +100,4 @@ ENV/
 
 beepboop/audio/tts.mp3
 .idea/
+beepboop/message_dump/
