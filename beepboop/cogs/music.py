@@ -1,9 +1,7 @@
 import asyncio
 import discord
 from discord.ext import commands
-from beepboop import Base
-import logging
-
+from beepboop.base import Base
 
 # if not discord.opus.is_loaded():
 #     # the 'opus' library here is opus.dll on windows
@@ -132,7 +130,7 @@ class Music(Base):
         if state.voice is not None:
             await state.voice.move_to(channel)
         else:
-             await self.bot.say("I am not connected to any voice channel on this server!")
+            await self.bot.say("I am not connected to any voice channel on this server!")
 
         return True
 
@@ -165,7 +163,11 @@ class Music(Base):
                 return
 
         try:
-            player = await state.voice.create_ytdl_player(song, ytdl_options=opts, after=state.toggle_next)
+            player = await state.voice.create_ytdl_player(
+                song, 
+                ytdl_options=opts, 
+                after=state.toggle_next
+            )
         except Exception as e:
             fmt = 'An error occurred while processing this request: ```py\n{}: {}\n```'
             await self.bot.send_message(ctx.message.channel, fmt.format(type(e).__name__, e))

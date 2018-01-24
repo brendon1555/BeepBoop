@@ -1,8 +1,7 @@
 import discord
 from discord.ext import commands
-from beepboop import Base
 from lxml import etree
-import logging
+from beepboop.base import Base
 
 
 class Google(Base):
@@ -177,7 +176,9 @@ class Google(Base):
                         for index, value in enumerate(definitions, 1):
                             descrip.append(f'{index}. {value.text}')
 
-                        e.add_field(name=f'{word.text} /{pronunciation.text}/', value='\n'.join(descrip))
+                        e.add_field(
+                            name=f'{word.text} /{pronunciation.text}/', value='\n'.join(descrip)
+                        )
                     except:
                         continue
 
@@ -269,7 +270,8 @@ class Google(Base):
             """
 
             card_node = root.xpath(".//div[@id='rso']/div[@class='_NId']//" \
-                                   "div[contains(@class, 'vk_c') or @class='g mnr-c g-blk' or @class='kp-blk']")
+                                   "div[contains(@class, 'vk_c') or " \
+                                   "@class='g mnr-c g-blk' or @class='kp-blk']")
 
             if card_node is None or len(card_node) == 0:
                 card = None
@@ -296,7 +298,9 @@ class Google(Base):
             await self.bot.say(str(e))
         else:
             if card:
-                value = '\n'.join(f'[{title}]({url.replace(")", "%29")})' for url, title in entries[:3])
+                value = '\n'.join(
+                    f'[{title}]({url.replace(")", "%29")})' for url, title in entries[:3]
+                )
                 if value:
                     card.add_field(name='Search Results', value=value, inline=False)
                 return await self.bot.say(embed=card)

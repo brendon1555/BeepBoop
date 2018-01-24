@@ -1,10 +1,9 @@
 import asyncio
-from discord.ext import commands
 from random import choice
 import json
-from beepboop import Base
 import os
-
+from discord.ext import commands
+from beepboop.base import Base
 
 class Jokes(Base):
 
@@ -34,12 +33,18 @@ class Jokes(Base):
                         return
 
                 try:
-                    player = state.voice.create_ffmpeg_player(os.path.join(self.audio_directory, 'funee_joke.mp3'), after=lambda: self.leave(state, ctx))
+                    player = state.voice.create_ffmpeg_player(
+                        os.path.join(
+                            self.audio_directory, 'funee_joke.mp3'
+                        ), after=lambda: self.leave(state, ctx)
+                    )
                     player.volume = 0.4
                     player.start()
                 except Exception as e:
                     fmt = 'An error occurred while processing this request: ```py\n{}: {}\n```'
-                    await self.bot.send_message(ctx.message.channel, fmt.format(type(e).__name__, e))
+                    await self.bot.send_message(
+                        ctx.message.channel, fmt.format(type(e).__name__, e)
+                    )
 
     def leave(self, state, ctx):
         try:
