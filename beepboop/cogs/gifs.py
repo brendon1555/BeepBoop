@@ -1,6 +1,3 @@
-"""
-    setup.py
-"""
 from discord.ext import commands
 import giphypop
 from beepboop.base import Base, _CONFIG

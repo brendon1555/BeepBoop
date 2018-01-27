@@ -6,7 +6,8 @@ requirements = [
     'gtts',
     'giphypop',
     'psutil',
-    'lxml'
+    'lxml',
+    'coinmarketcap'
 ]
 
 

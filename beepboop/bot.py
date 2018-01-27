@@ -16,7 +16,8 @@ EXTENSIONS = [
     'beepboop.cogs.music',
     'beepboop.cogs.utils',
     'beepboop.cogs.fun',
-    'beepboop.cogs.google'
+    'beepboop.cogs.google',
+    'beepboop.cogs.crypto'
 ]
 
 

@@ -3,3 +3,5 @@ include beepboop/bot.py
 include beepboop/config.json
 include beepboop/text/*
 include beepboop/audio/*
+
+exclude beepboop/audio/tts.mp3

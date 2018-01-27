@@ -100,10 +100,10 @@ class Music(Base):
         """Joins a voice channel."""
         try:
             await self.create_voice_client(channel)
-        except discord.ClientException:
-            await self.bot.say('Already in a voice channel...')
         except discord.InvalidArgument:
             await self.bot.say('This is not a voice channel...')
+        except discord.ClientException:
+            await self.bot.say('Already in a voice channel...')
         else:
             await self.bot.say('Ready to play audio in ' + channel.name)
 
