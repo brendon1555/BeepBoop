@@ -1,6 +1,7 @@
 include beepboop/__init__.py
 include beepboop/bot.py
 include beepboop/config.json
+include beepboop/summoners.json
 include beepboop/text/*
 include beepboop/audio/*
 

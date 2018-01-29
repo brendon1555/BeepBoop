@@ -9,7 +9,8 @@ requirements = [
     'lxml',
     'coinmarketcap',
     'cassiopeia',
-    'cassiopeia-sqlstore'
+    'cassiopeia-sqlstore',
+    'sqlalchemy'
 ]
 
 
