@@ -6,7 +6,10 @@ import aiohttp
 from beepboop import __version__
 from beepboop.base import _CONFIG
 
-logging.basicConfig(level=logging.DEBUG)
+import signal
+signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+logging.basicConfig(level=logging.WARNING)
 
 BOT = commands.Bot(command_prefix=commands.when_mentioned_or('!!'), description='Beep Boop')
 
@@ -17,7 +20,8 @@ EXTENSIONS = [
     'beepboop.cogs.utils',
     'beepboop.cogs.fun',
     'beepboop.cogs.google',
-    'beepboop.cogs.crypto'
+    'beepboop.cogs.crypto',
+    'beepboop.cogs.lol'
 ]
 
 

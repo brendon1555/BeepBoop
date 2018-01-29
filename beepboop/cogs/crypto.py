@@ -39,7 +39,7 @@ class Crypto(Base):
         else:
             msg = '**Crypto:** ```Currency: %s\nSymbol: %s\nChange 1h: %s%%\nChange 24h: %s%%\nChange 7d: %s%%\nPrice AUD: $%s```' % (
                 ticker[0]['name'], ticker[0]['symbol'], ticker[0]['percent_change_1h'], ticker[0]['percent_change_24h'], ticker[0]['percent_change_7d'], ticker[0]['price_aud'])
-            await self.bot.SAY(msg)
+            await self.bot.say(msg)
 
     # async def _translate_gif(self, ctx, phrase: str):
     #     translated_gif = self.giphy.translate(phrase=phrase)

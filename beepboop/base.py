@@ -3,8 +3,11 @@ import json
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-with open('config.json') as f:
-    _CONFIG = json.load(f)
+with open('config.json') as conf:
+    _CONFIG = json.load(conf)
+
+with open('summoners.json') as summoners:
+    _SUMMONERS = json.load(summoners)
 
 
 class Base(object):

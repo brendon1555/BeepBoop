@@ -7,7 +7,9 @@ requirements = [
     'giphypop',
     'psutil',
     'lxml',
-    'coinmarketcap'
+    'coinmarketcap',
+    'cassiopeia',
+    'cassiopeia-sqlstore'
 ]
 
 
