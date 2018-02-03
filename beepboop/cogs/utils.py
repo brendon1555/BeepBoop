@@ -292,5 +292,16 @@ class Utils(Base):
         await self.bot.send_message(ctx.message.channel, "Finished downloading!")
 
 
+    @commands.check(Checks.is_owner)
+    @commands.command(pass_context=True)
+    async def emojis(self, ctx):
+        from pprint import pprint
+        emoji_list = []
+        for emoji in self.bot.get_all_emojis():
+            emoji_string = "<:{}:{}>".format(emoji.name, emoji.id)
+            emoji_list.append(emoji_string)
+
+        pprint(emoji_list)
+
 def setup(bot):
     bot.add_cog(Utils(bot))

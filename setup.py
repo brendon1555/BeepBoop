@@ -10,6 +10,7 @@ requirements = [
     'coinmarketcap',
     'cassiopeia',
     'cassiopeia-sqlstore',
+    'cassiopeia-diskstore',
     'sqlalchemy'
 ]
 

@@ -6,8 +6,8 @@ import aiohttp
 from beepboop import __version__
 from beepboop.base import _CONFIG
 
-import signal
-signal.signal(signal.SIGINT, signal.SIG_DFL)
+# import signal
+# signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 logging.basicConfig(level=logging.WARNING)
 

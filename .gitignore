@@ -107,3 +107,5 @@ beepboop/message_dump/
 beepboop/config.json
 beepboop/cassiopeia.db
 beepboop/summoners.json
+beepboop/cass_cache/
+**_test.py
