@@ -8,8 +8,6 @@ requirements = [
     'psutil',
     'lxml',
     'coinmarketcap',
-    'cassiopeia',
-    'cassiopeia-sqlstore',
     'cassiopeia-diskstore',
     'sqlalchemy'
 ]
@@ -39,6 +37,7 @@ setup(name='beepboop',
       packages=find_packages(),
       zip_safe=False,
       install_requires=requirements,
+      dependency_links=['https://github.com/meraki-analytics/cassiopeia/tarball/master'],
       platforms=['Any'],
       classifiers=[
           'Development Status :: 4 - Beta',

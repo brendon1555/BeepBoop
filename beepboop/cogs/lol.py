@@ -11,6 +11,21 @@ from beepboop.base import Base, _CONFIG, _SUMMONERS
 CHAMPION_EMOJIS, SPELL_EMOJIS, BDT_EMOJIS = {}, {}, {}
 UNKNOWN_EMOJI = ":grey_question:"
 
+QueueStrings = {
+    Queue.ranked_solo_fives: "Ranked Solo", 
+    Queue.ranked_flex_fives: "Ranked Flex", 
+    Queue.normal_draft_fives: "Draft", 
+    Queue.blind_fives: "Blind", 
+    Queue.depreciated_blind_fives: "Blind", 
+    Queue.depreciated_draft_fives: "Draft", 
+    Queue.depreciated_ranked_solo_fives: "Ranked Solo", 
+    Queue.depreciated_ranked_premade_fives: "Ranked Premade", 
+    Queue.depreciated_ranked_team_fives: "Ranked Team",
+    Queue.depreciated_team_builder_fives: "Ranked Team Builder",
+    Queue.depreciated_ranked_fives: "Ranked"
+}
+
+
 class Lol(Base):
 
     def __init__(self, bot):
@@ -33,15 +48,14 @@ class Lol(Base):
         if ctx.invoked_subcommand is None:
             await self.bot.say('Invalid lol command')
 
-    # @lol.command(pass_context=True, no_pm=True)
-    # async def status(self, ctx):
-    #     status = self.cass.get_status(region="OCE")
-    #     em = Embed(color=0xea7938)
-    #     em.add_field(name='Name', value=status.name, inline=False)
-    #     print(status)
-    #     # for service in status.services:
-    #     #     em.add_field(name=service.name, value=service.status)
-    #     await self.bot.send_message(ctx.message.channel, embed=em)
+    @lol.command(pass_context=True, no_pm=True)
+    async def status(self, ctx):
+        status = self.cass.get_status(region="OCE")
+        em = Embed(color=0xea7938)
+        em.add_field(name='Name', value=status.name, inline=False)
+        for service in status.services:
+            em.add_field(name=service.name, value=service.status)
+        await self.bot.send_message(ctx.message.channel, embed=em)
 
 
     @lol.command(pass_context=True, no_pm=True)
@@ -114,10 +128,24 @@ class Lol(Base):
             await self.bot.say("Gotta assign a summoner to yourself before you can use this command (!!lol assign_summoner SUMMONER_NAME)")
             return
 
+        queues = {
+            Queue.ranked_solo_fives, 
+            Queue.ranked_flex_fives, 
+            Queue.normal_draft_fives, 
+            Queue.blind_fives, 
+            Queue.depreciated_blind_fives, 
+            Queue.depreciated_draft_fives, 
+            Queue.depreciated_ranked_solo_fives, 
+            Queue.depreciated_ranked_premade_fives, 
+            Queue.depreciated_ranked_team_fives,
+            Queue.depreciated_team_builder_fives,
+            Queue.depreciated_ranked_fives
+        }
+
         # Overall last 10 games
         summoner = self.cass.Summoner(id=int(self.summoners['summoners'][ctx.message.author.id]["id"]), region="OCE")
         if champion_name is None:
-            history = self.cass.get_match_history(summoner=summoner, queues=set([Queue.normal_draft_fives, Queue.blind_fives]), end_index=10)
+            history = self.cass.get_match_history(summoner=summoner, queues=queues, end_index=10)
         else:
             try:
                 champion = self.cass.Champion(name=champion_name, region="OCE")
@@ -126,7 +154,7 @@ class Lol(Base):
                 return
 
             try:
-                history = self.cass.get_match_history(summoner=summoner, champions={champion}, queues={Queue.normal_draft_fives, Queue.blind_fives}, end_index=10)
+                history = self.cass.get_match_history(summoner=summoner, champions={champion}, queues=queues, end_index=10)
             except datapipelines.common.NotFoundError:
                 await self.bot.say("No Champion found. Try `!!lol champions`")
                 return
@@ -147,7 +175,7 @@ class Lol(Base):
             assists += match.participants[summoner.name].stats.assists
             deaths += match.participants[summoner.name].stats.deaths
 
-            champ = [match.participants[summoner.name].champion, match.participants[summoner.name].stats]
+            champ = [match.participants[summoner.name].champion, match.participants[summoner.name].stats, match]
             champs.append(champ)
 
         if(deaths != 0):
@@ -157,8 +185,8 @@ class Lol(Base):
 
 
         champion_text = '\n'.join([
-            '{} {}'.format(
-                CHAMPION_EMOJIS.get(champion_stats[0].id, UNKNOWN_EMOJI), champion_stats[0].name)
+            '{} {} ({})'.format(
+                CHAMPION_EMOJIS.get(champion_stats[0].id, UNKNOWN_EMOJI), champion_stats[0].name, QueueStrings[champion_stats[2].queue])
             for champion_stats in champs
         ])
 
