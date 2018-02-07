@@ -5,3 +5,4 @@ include beepboop/text/*
 include beepboop/audio/*
 
 exclude beepboop/audio/tts.mp3
+exclude beepboop/audio/youtube--**

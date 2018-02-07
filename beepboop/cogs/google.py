@@ -288,38 +288,38 @@ class Google(Base):
 
         return card, entries
 
-    @commands.command(pass_context=True, no_pm=True, aliases=['google'])
+    @commands.command(aliases=['google'])
     async def g(self, ctx, *, query):
         """Searches google and gives you top result."""
-        await self.bot.send_typing(ctx.message.channel)
-        try:
-            card, entries = await self.get_google_entries(query)
-        except RuntimeError as e:
-            await self.bot.say(str(e))
-        else:
-            if card:
-                value = '\n'.join(
-                    f'[{title}]({url.replace(")", "%29")})' for url, title in entries[:3]
-                )
-                if value:
-                    card.add_field(name='Search Results', value=value, inline=False)
-                return await self.bot.say(embed=card)
-
-            if len(entries) == 0:
-                return await self.bot.say('No results found... sorry.')
-
-            next_two = [x[0] for x in entries[1:3]]
-            first_entry = entries[0][0]
-            if first_entry[-1] == ')':
-                first_entry = first_entry[:-1] + '%29'
-
-            if next_two:
-                formatted = '\n'.join(f'<{x}>' for x in next_two)
-                msg = f'{first_entry}\n\n**See also:**\n{formatted}'
+        async with ctx.typing():
+            try:
+                card, entries = await self.get_google_entries(query)
+            except RuntimeError as e:
+                await ctx.send(str(e))
             else:
-                msg = first_entry
+                if card:
+                    value = '\n'.join(
+                        f'[{title}]({url.replace(")", "%29")})' for url, title in entries[:3]
+                    )
+                    if value:
+                        card.add_field(name='Search Results', value=value, inline=False)
+                    return await ctx.send(embed=card)
 
-            await self.bot.say(msg)
+                if len(entries) == 0:
+                    return await ctx.send('No results found... sorry.')
+
+                next_two = [x[0] for x in entries[1:3]]
+                first_entry = entries[0][0]
+                if first_entry[-1] == ')':
+                    first_entry = first_entry[:-1] + '%29'
+
+                if next_two:
+                    formatted = '\n'.join(f'<{x}>' for x in next_two)
+                    msg = f'{first_entry}\n\n**See also:**\n{formatted}'
+                else:
+                    msg = first_entry
+
+                await ctx.send(msg)
 
 
 def setup(bot):

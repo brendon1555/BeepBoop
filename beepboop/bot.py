@@ -15,8 +15,8 @@ BOT = commands.Bot(command_prefix=commands.when_mentioned_or('!!'), description=
 
 EXTENSIONS = [
     'beepboop.cogs.gifs',
-    'beepboop.cogs.jokes',
     'beepboop.cogs.music',
+    'beepboop.cogs.jokes',
     'beepboop.cogs.utils',
     'beepboop.cogs.fun',
     'beepboop.cogs.google',
@@ -50,9 +50,9 @@ async def on_ready():
 
 @BOT.event
 async def on_member_join(member):
-    server = member.server
+    guild = member.guild
     fmt = '{} who dis?!'
-    await BOT.send_message(server, fmt.format(member.mention))
+    await guild.send(fmt.format(member.mention))
 
 
 @BOT.event

@@ -102,6 +102,7 @@ ENV/
 .vscode/
 
 beepboop/audio/tts.mp3
+beepboop/audio/youtube--**
 .idea/
 beepboop/message_dump/
 beepboop/config.json

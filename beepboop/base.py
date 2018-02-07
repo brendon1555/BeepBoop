@@ -9,17 +9,19 @@ with open('config.json') as conf:
 with open('summoners.json') as summoners:
     _SUMMONERS = json.load(summoners)
 
+_AUDIO_DIRECTORY = os.path.join(os.path.dirname(__file__), 'audio')
+_TEXT_DIRECTORY = os.path.join(os.path.dirname(__file__), 'text')
 
 class Base(object):
 
     def __init__(self):
-        self.audio_directory = os.path.join(os.path.dirname(__file__), 'audio')
-        self.text_directory = os.path.join(os.path.dirname(__file__), 'text')
+        self.audio_directory = _AUDIO_DIRECTORY
+        self.text_directory = _TEXT_DIRECTORY
         self.config = _CONFIG
 
     @staticmethod
     async def cleanup(the_bot, message):
-        await the_bot.delete_message(message)
+        await message.delete()
 
     @staticmethod
     def embed_perms(message):

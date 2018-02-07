@@ -38,7 +38,7 @@ class Fun(Base):
                           '?': '\u2753'}
         self.kaomoji = {'tableflip': '(╯°□°）╯︵ ┻━┻', 'tableset': '┬──┬ ノ( ゜-゜ノ)'}
 
-    @commands.command(pass_context=True, no_pm=True, aliases=['8ball'])
+    @commands.command(aliases=['8ball'])
     async def ball8(self, ctx, *, msg: str):
         answer = randint(0, 19)
         if self.embed_perms(ctx.message):
@@ -51,31 +51,31 @@ class Fun(Base):
             em = discord.Embed(color=colour)
             em.add_field(name='\u2753 Question', value=msg)
             em.add_field(name='\ud83c\udfb1 8ball', value=self.ball[answer], inline=False)
-            await self.bot.say(embed=em)
+            await ctx.send(embed=em)
         else:
-            await self.bot.say('\ud83c\udfb1 ``{}``'.format(choice(self.ball)))
+            await ctx.send('\ud83c\udfb1 ``{}``'.format(choice(self.ball)))
 
-    @commands.command(pass_context=True, no_pm=True, aliases=['choose'])
+    @commands.command(aliases=['choose'])
     async def pick(self, ctx, *, msg: str):
         """Picks randomly from the options provided separated by |"""
-        await self.bot.say('I choose: {}'.format(choice(msg.split("|"))))
+        await ctx.send('I choose: {}'.format(choice(msg.split("|"))))
 
-    @commands.command(pass_context=True, no_pm=True, aliases=["huge"])
+    @commands.command(aliases=["huge"])
     async def big(self, ctx, *, msg):
         """Replace letters with emojis"""
         msg = list(msg)
         regional_list = [self.regionals[x.lower()] if x.isalnum() or x == '!' or x == '?' else x for x in msg]
         regional_output = ' '.join(regional_list)
-        await self.bot.send_message(ctx.message.channel, regional_output)
+        await ctx.send(regional_output)
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
     async def flip(self, ctx):
         print("in flip")
-        await self.bot.say(self.kaomoji['tableflip'])
+        await ctx.send(self.kaomoji['tableflip'])
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
     async def unflip(self, ctx):
-        await self.bot.say(self.kaomoji['tableset'])
+        await ctx.send(self.kaomoji['tableset'])
 
 
 def setup(bot):

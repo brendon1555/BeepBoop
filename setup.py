@@ -9,7 +9,7 @@ requirements = [
     'lxml',
     'coinmarketcap',
     'cassiopeia-diskstore',
-    'sqlalchemy'
+    'youtube_dl'
 ]
 
 

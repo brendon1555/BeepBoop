@@ -43,167 +43,167 @@ class Lol(Base):
             for symbol, value in symbols.items():
                 BDT_EMOJIS[color[0] + symbol[0]] = value
 
-    @commands.group(pass_context=True, no_pm=True)
+    @commands.group()
     async def lol(self, ctx):
         if ctx.invoked_subcommand is None:
-            await self.bot.say('Invalid lol command')
+            await ctx.send('Invalid lol command')
 
-    @lol.command(pass_context=True, no_pm=True)
+    @lol.command()
     async def status(self, ctx):
         status = self.cass.get_status(region="OCE")
         em = Embed(color=0xea7938)
         em.add_field(name='Name', value=status.name, inline=False)
         for service in status.services:
             em.add_field(name=service.name, value=service.status)
-        await self.bot.send_message(ctx.message.channel, embed=em)
+        await ctx.send(embed=em)
 
 
-    @lol.command(pass_context=True, no_pm=True)
+    @lol.command()
     async def champions(self, ctx):
-        await self.bot.type()
-        champions = self.cass.Champions(region="OCE")
-        champions_text = '\n'.join([
-            '{}'.format(champion.name)
-            for champion in champions
-        ])
-        await self.bot.say('Valid Champion names:```{}```'.format(champions_text))
+        async with ctx.typing():
+            champions = self.cass.Champions(region="OCE")
+            champions_text = '\n'.join([
+                '{}'.format(champion.name)
+                for champion in champions
+            ])
+            await ctx.send('Valid Champion names:```{}```'.format(champions_text))
 
 
-    @lol.command(pass_context=True, no_pm=True)
+    @lol.command()
     async def assign_summoner(self, ctx, *, name=None):
         """Assigns a summoner to your discord user"""
-        await self.bot.type()
-        if name is None:
-            await self.bot.say("Gotta give me a summoner name")
-        else:
-            try:
-                summoner = self.cass.Summoner(name=name, region="OCE")
-            except datapipelines.common.NotFoundError:
-                await self.bot.say("No Summoner found")
-                return
-
-            self.summoners['summoners'][ctx.message.author.id] = {"id": summoner.id, "accountId": summoner.account.id, "name": summoner.name}
-            with open('summoners.json', 'w') as outfile:  
-                json.dump(self.summoners, outfile)
-
-            await self.bot.say("Assigned summoner %s to %s" % (summoner.name, ctx.message.author.name))
-
-
-    @lol.command(pass_context=True, no_pm=True)
-    async def summoner(self, ctx, *, name=None):
-        """Sends summoner info"""
-        await self.bot.type()
-        if name is None and ctx.message.author.id not in self.summoners['summoners']:
-            await self.bot.say("Gotta give me a summoner name or assign a summoner to yourself")
-        else:
+        async with ctx.typing():
             if name is None:
-                summoner = self.cass.Summoner(id=int(self.summoners['summoners'][ctx.message.author.id]["id"]), region="OCE")
+                await ctx.send("Gotta give me a summoner name")
             else:
                 try:
                     summoner = self.cass.Summoner(name=name, region="OCE")
                 except datapipelines.common.NotFoundError:
-                    await self.bot.say("No Summoner found")
+                    await ctx.send("No Summoner found")
                     return
 
-            mastery_list = [[mastery.champion.id, mastery.champion.name, mastery.level] for mastery in islice(sorted(summoner.champion_masteries, key=lambda mastery: mastery.points, reverse=True), 3)]
-            top_champions_text = '\n'.join([
-                '{} {} (Level: {})'.format(
-                    CHAMPION_EMOJIS.get(mastery[0], UNKNOWN_EMOJI), mastery[1], mastery[2])
-                for mastery in mastery_list
+                self.summoners['summoners'][str(ctx.message.author.id)] = {"id": summoner.id, "accountId": summoner.account.id, "name": summoner.name}
+                with open('summoners.json', 'w') as outfile:  
+                    json.dump(self.summoners, outfile)
+
+                await ctx.send("Assigned summoner %s to %s" % (summoner.name, ctx.message.author.name))
+
+
+    @lol.command()
+    async def summoner(self, ctx, *, name=None):
+        """Sends summoner info"""
+        async with ctx.typing():
+            if name is None and str(ctx.message.author.id) not in self.summoners['summoners']:
+                await ctx.send("Gotta give me a summoner name or assign a summoner to yourself")
+            else:
+                if name is None:
+                    summoner = self.cass.Summoner(id=int(self.summoners['summoners'][str(ctx.message.author.id)]["id"]), region="OCE")
+                else:
+                    try:
+                        summoner = self.cass.Summoner(name=name, region="OCE")
+                    except datapipelines.common.NotFoundError:
+                        await ctx.send("No Summoner found")
+                        return
+
+                mastery_list = [[mastery.champion.id, mastery.champion.name, mastery.level] for mastery in islice(sorted(summoner.champion_masteries, key=lambda mastery: mastery.points, reverse=True), 3)]
+                top_champions_text = '\n'.join([
+                    '{} {} (Level: {})'.format(
+                        CHAMPION_EMOJIS.get(mastery[0], UNKNOWN_EMOJI), mastery[1], mastery[2])
+                    for mastery in mastery_list
+                ])
+
+                em = Embed(color=0xea7938)
+                em.set_author(name='Summoner Profile: %s' % summoner.name,
+                            icon_url=summoner.profile_icon.url)
+                em.add_field(name='Level', value=summoner.level)
+                em.add_field(name='Top Champions', value=top_champions_text)
+                em.set_thumbnail(url=summoner.profile_icon.url)
+                await ctx.send(embed=em)
+
+
+    @lol.command()
+    async def kda(self, ctx, *, champion_name=None):
+        async with ctx.typing():
+            if str(ctx.message.author.id) not in self.summoners['summoners']:
+                await ctx.send("Gotta assign a summoner to yourself before you can use this command (!!lol assign_summoner SUMMONER_NAME)")
+                return
+
+            queues = {
+                Queue.ranked_solo_fives, 
+                Queue.ranked_flex_fives, 
+                Queue.normal_draft_fives, 
+                Queue.blind_fives, 
+                Queue.depreciated_blind_fives, 
+                Queue.depreciated_draft_fives, 
+                Queue.depreciated_ranked_solo_fives, 
+                Queue.depreciated_ranked_premade_fives, 
+                Queue.depreciated_ranked_team_fives,
+                Queue.depreciated_team_builder_fives,
+                Queue.depreciated_ranked_fives
+            }
+
+            # Overall last 10 games
+            summoner = self.cass.Summoner(id=int(self.summoners['summoners'][str(ctx.message.author.id)]["id"]), region="OCE")
+            if champion_name is None:
+                history = self.cass.get_match_history(summoner=summoner, queues=queues, end_index=10)
+            else:
+                try:
+                    champion = self.cass.Champion(name=champion_name, region="OCE")
+                except datapipelines.common.NotFoundError:
+                    await ctx.send("No Champion found. Try `!!lol champions`")
+                    return
+
+                try:
+                    history = self.cass.get_match_history(summoner=summoner, champions={champion}, queues=queues, end_index=10)
+                except datapipelines.common.NotFoundError:
+                    await ctx.send("No Champion found. Try `!!lol champions`")
+                    return
+
+            if len(history) == 0:
+                await ctx.send("No match history")
+                return
+
+            kills = 0
+            assists = 0
+            deaths = 0
+
+            champs = []
+
+            for match in history:
+
+                kills += match.participants[summoner.name].stats.kills
+                assists += match.participants[summoner.name].stats.assists
+                deaths += match.participants[summoner.name].stats.deaths
+
+                champ = [match.participants[summoner.name].champion, match.participants[summoner.name].stats, match]
+                champs.append(champ)
+
+            if(deaths != 0):
+                kda = (kills + assists) / deaths
+            else:
+                kda = kills + assists
+
+
+            champion_text = '\n'.join([
+                '{} {} ({})'.format(
+                    CHAMPION_EMOJIS.get(champion_stats[0].id, UNKNOWN_EMOJI), champion_stats[0].name, QueueStrings[champion_stats[2].queue])
+                for champion_stats in champs
+            ])
+
+            kda_text = '\n'.join([
+                ':skull_crossbones: {}|{}|{} ({})'.format(
+                    champion_stats[1].kills,  champion_stats[1].deaths, champion_stats[1].assists, round(champion_stats[1].kda, 2))
+                for champion_stats in champs
             ])
 
             em = Embed(color=0xea7938)
-            em.set_author(name='Summoner Profile: %s' % summoner.name,
+            em.set_author(name='KDA: %s' % summoner.name,
                         icon_url=summoner.profile_icon.url)
-            em.add_field(name='Level', value=summoner.level)
-            em.add_field(name='Top Champions', value=top_champions_text)
+            em.add_field(name='Champion', value=champion_text)
+            em.add_field(name='Game KDA', value=kda_text)
+            em.add_field(name='Overall KDA', value=round(kda, 2),)
             em.set_thumbnail(url=summoner.profile_icon.url)
-            await self.bot.send_message(ctx.message.channel, embed=em)
-
-
-    @lol.command(pass_context=True, no_pm=True)
-    async def kda(self, ctx, *, champion_name=None):
-        await self.bot.type()
-        if ctx.message.author.id not in self.summoners['summoners']:
-            await self.bot.say("Gotta assign a summoner to yourself before you can use this command (!!lol assign_summoner SUMMONER_NAME)")
-            return
-
-        queues = {
-            Queue.ranked_solo_fives, 
-            Queue.ranked_flex_fives, 
-            Queue.normal_draft_fives, 
-            Queue.blind_fives, 
-            Queue.depreciated_blind_fives, 
-            Queue.depreciated_draft_fives, 
-            Queue.depreciated_ranked_solo_fives, 
-            Queue.depreciated_ranked_premade_fives, 
-            Queue.depreciated_ranked_team_fives,
-            Queue.depreciated_team_builder_fives,
-            Queue.depreciated_ranked_fives
-        }
-
-        # Overall last 10 games
-        summoner = self.cass.Summoner(id=int(self.summoners['summoners'][ctx.message.author.id]["id"]), region="OCE")
-        if champion_name is None:
-            history = self.cass.get_match_history(summoner=summoner, queues=queues, end_index=10)
-        else:
-            try:
-                champion = self.cass.Champion(name=champion_name, region="OCE")
-            except datapipelines.common.NotFoundError:
-                await self.bot.say("No Champion found. Try `!!lol champions`")
-                return
-
-            try:
-                history = self.cass.get_match_history(summoner=summoner, champions={champion}, queues=queues, end_index=10)
-            except datapipelines.common.NotFoundError:
-                await self.bot.say("No Champion found. Try `!!lol champions`")
-                return
-
-        if len(history) == 0:
-            await self.bot.say("No match history")
-            return
-
-        kills = 0
-        assists = 0
-        deaths = 0
-
-        champs = []
-
-        for match in history:
-
-            kills += match.participants[summoner.name].stats.kills
-            assists += match.participants[summoner.name].stats.assists
-            deaths += match.participants[summoner.name].stats.deaths
-
-            champ = [match.participants[summoner.name].champion, match.participants[summoner.name].stats, match]
-            champs.append(champ)
-
-        if(deaths != 0):
-            kda = (kills + assists) / deaths
-        else:
-            kda = kills + assists
-
-
-        champion_text = '\n'.join([
-            '{} {} ({})'.format(
-                CHAMPION_EMOJIS.get(champion_stats[0].id, UNKNOWN_EMOJI), champion_stats[0].name, QueueStrings[champion_stats[2].queue])
-            for champion_stats in champs
-        ])
-
-        kda_text = '\n'.join([
-            ':skull_crossbones: {}|{}|{} ({})'.format(
-                champion_stats[1].kills,  champion_stats[1].deaths, champion_stats[1].assists, round(champion_stats[1].kda, 2))
-            for champion_stats in champs
-        ])
-
-        em = Embed(color=0xea7938)
-        em.set_author(name='KDA: %s' % summoner.name,
-                    icon_url=summoner.profile_icon.url)
-        em.add_field(name='Champion', value=champion_text)
-        em.add_field(name='Game KDA', value=kda_text)
-        em.add_field(name='Overall KDA', value=round(kda, 2),)
-        em.set_thumbnail(url=summoner.profile_icon.url)
-        await self.bot.send_message(ctx.message.channel, embed=em)
+            await ctx.send(embed=em)
 
 
 
