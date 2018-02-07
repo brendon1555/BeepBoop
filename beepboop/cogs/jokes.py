@@ -23,9 +23,7 @@ class Jokes(Base):
             await ctx.send(joke["punchline"])
 
             state = self.bot.get_cog("Music").get_voice_state(ctx.message.guild)
-            print(state)
             summoned_channel = ctx.message.author.voice.channel
-            print(summoned_channel)
             if summoned_channel is not None:
                 if state.voice is None:
                     success = await ctx.invoke(self.bot.get_cog("Music").summon)

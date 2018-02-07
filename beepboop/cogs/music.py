@@ -102,9 +102,7 @@ class VoiceState:
         self.bot.loop.call_soon_threadsafe(self.play_next_song.set)
 
     async def audio_player_task(self):
-        print("entering here")
         while True:
-            print("inside")
             self.play_next_song.clear()
             self.current = await self.songs.get()
             await self.current.channel.send('Now playing ' + str(self.current))
@@ -292,7 +290,6 @@ class Music(Base):
         """Shows info about the currently played song."""
 
         state = self.get_voice_state(ctx.message.guild)
-        print(state.voice.is_playing())
         if state.current is None:
             await ctx.send('Not playing anything.')
         else:

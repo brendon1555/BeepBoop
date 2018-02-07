@@ -279,11 +279,9 @@ class Google(Base):
                 card = self.parse_google_card(card_node[0])
 
             search_results = root.findall(".//div[@class='rc']")
-            # print(len(search_results))
             for node in search_results:
                 link = node.find("./h3[@class='r']/a")
                 if link is not None:
-                    # print(etree.tostring(link, pretty_print=True).decode())
                     entries.append((link.get('href'), link.text))
 
         return card, entries

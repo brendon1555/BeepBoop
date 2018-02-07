@@ -70,7 +70,6 @@ class Fun(Base):
 
     @commands.command()
     async def flip(self, ctx):
-        print("in flip")
         await ctx.send(self.kaomoji['tableflip'])
 
     @commands.command()
