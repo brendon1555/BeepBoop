@@ -22,31 +22,32 @@ class Jokes(Base):
             await asyncio.sleep(3)
             await ctx.send(joke["punchline"])
 
-            state = self.bot.get_cog("Music").get_voice_state(ctx.message.guild)
             summoned_channel = ctx.message.author.voice.channel
             if summoned_channel is not None:
-                if state.voice is None:
-                    success = await ctx.invoke(self.bot.get_cog("Music").summon)
-                    if not success:
+                vc = ctx.guild.voice_client
+
+                if vc is None:
+                    await ctx.invoke(self.bot.get_cog("Music").voice_connect)
+                    if not ctx.guild.voice_client:
                         return
+                    else:
+                        vc = ctx.guild.voice_client
 
                 try:
                     source = PCMVolumeTransformer(FFmpegPCMAudio(os.path.join(
                             self.audio_directory, 'funee_joke.mp3'
-                        )), volume=0.4)
-                    state.voice.play(source, after=lambda: self.leave(state, ctx))
+                        )), volume=0.2)
+                    vc.play(source, after=lambda x: self.leave(ctx))
                 except Exception as e:
                     fmt = 'An error occurred while processing this request: ```py\n{}: {}\n```'
                     await ctx.send(
                         fmt.format(type(e).__name__, e)
                     )
 
-    def leave(self, state, ctx):
+    def leave(self, ctx):
         try:
-            state.audio_player.cancel()
-            del self.bot.get_cog("Music").voice_states[ctx.message.guild.id]
-            disconnect = state.voice.disconnect()
-            fut = asyncio.run_coroutine_threadsafe(disconnect, self.bot.loop)
+            stop_player = ctx.invoke(self.bot.get_cog("Music").stop_player)
+            fut = asyncio.run_coroutine_threadsafe(stop_player, self.bot.loop)
             fut.result()
         except Exception as e:
             fmt = 'An error occurred while processing this request: ```py\n{}: {}\n```'

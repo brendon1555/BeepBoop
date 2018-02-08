@@ -1,9 +1,11 @@
+import os
+import logging
+import asyncio
 from discord.ext import commands
 from random import choice, randint
 from beepboop.base import Base
 import discord
-import logging
-
+from discord import PCMVolumeTransformer, FFmpegPCMAudio
 
 class Fun(Base):
 
@@ -76,6 +78,44 @@ class Fun(Base):
     async def unflip(self, ctx):
         await ctx.send(self.kaomoji['tableset'])
 
+    @commands.command()
+    async def mlg(self, ctx):
+        summoned_channel = ctx.message.author.voice.channel
+        if summoned_channel is not None:
+            vc = ctx.guild.voice_client
+
+            if vc is None:
+                await ctx.invoke(self.bot.get_cog("Music").voice_connect)
+                if not ctx.guild.voice_client:
+                    return
+                else:
+                    vc = ctx.guild.voice_client
+            else:
+                if ctx.author not in vc.channel.members:
+                    return await ctx.send(f'You must be in **{vc.channel}** to request songs.', delete_after=30)
+
+            try:
+                source = PCMVolumeTransformer(FFmpegPCMAudio(os.path.join(
+                        self.audio_directory, 'mlg_airhorn.mp3'
+                    )), volume=0.2)
+                vc.play(source, after=lambda x: self.leave(ctx))
+            except Exception as e:
+                fmt = 'An error occurred while processing this request: ```py\n{}: {}\n```'
+                await ctx.send(
+                    fmt.format(type(e).__name__, e)
+                )
+
+    def leave(self, ctx):
+        try:
+            stop_player = ctx.invoke(self.bot.get_cog("Music").stop_player)
+            fut = asyncio.run_coroutine_threadsafe(stop_player, self.bot.loop)
+            fut.result()
+        except Exception as e:
+            fmt = 'An error occurred while processing this request: ```py\n{}: {}\n```'
+            print(fmt.format(type(e).__name__, e))
+            message = ctx.send(fmt.format(type(e).__name__, e))
+            fut = asyncio.run_coroutine_threadsafe(message, self.bot.loop)
+            fut.result()
 
 def setup(bot):
     bot.add_cog(Fun(bot))

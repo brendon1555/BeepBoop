@@ -4,6 +4,7 @@ import os
 from gtts import gTTS
 from discord.ext import commands
 import discord
+from discord import PCMVolumeTransformer, FFmpegPCMAudio
 from beepboop.base import Base, Checks
 
 
@@ -35,24 +36,24 @@ class Utils(Base):
         """Ignore this"""
         if ctx.message.author.id == 141480928995311616:
 
-            state = self.music.get_voice_state(ctx.message.guild)
-            summoned_channel = ctx.message.author.voice_channel
+            summoned_channel = ctx.message.author.voice.channel
             if summoned_channel is not None:
                 tts = gTTS(text=message, lang='en')
                 tts.save(os.path.join(self.audio_directory, "tts.mp3"))
-                if state.voice is None:
-                    success = await ctx.invoke(self.music.summon)
-                    if not success:
+
+                vc = ctx.guild.voice_client
+                if vc is None:
+                    await ctx.invoke(self.bot.get_cog("Music").voice_connect)
+                    if not ctx.guild.voice_client:
                         return
+                    else:
+                        vc = ctx.guild.voice_client
 
                 try:
-                    player = state.voice.create_ffmpeg_player(
-                        os.path.join(
-                            self.audio_directory, "tts.mp3"
-                        ), after=lambda: self.__leave(state, ctx)
-                    )
-                    player.volume = 0.4
-                    player.start()
+                    source = PCMVolumeTransformer(FFmpegPCMAudio(os.path.join(
+                        self.audio_directory, 'tts.mp3'
+                    )), volume=0.2)
+                    vc.play(source, after=lambda x: self.__leave(ctx))
                 except Exception as e:
                     fmt = 'An error occurred while processing this request: ```py\n{}: {}\n```'
                     await ctx.send(fmt.format(type(e).__name__, e))
@@ -60,18 +61,15 @@ class Utils(Base):
             else:
                 await ctx.send("I need you in a Voice Channel to hear me")
 
-    def __leave(self, state, ctx):
+    def __leave(self, ctx):
         try:
-            state.audio_player.cancel()
-            del self.music.voice_states[ctx.message.guild.id]
-            disconnect = state.voice.disconnect()
-            fut = asyncio.run_coroutine_threadsafe(disconnect, self.bot.loop)
+            stop_player = ctx.invoke(self.bot.get_cog("Music").stop_player)
+            fut = asyncio.run_coroutine_threadsafe(stop_player, self.bot.loop)
             fut.result()
         except Exception as e:
             fmt = 'An error occurred while processing this request: ```py\n{}: {}\n```'
             print(fmt.format(type(e).__name__, e))
-            message = ctx.send(
-                fmt.format(type(e).__name__, e))
+            message = ctx.send(fmt.format(type(e).__name__, e))
             fut = asyncio.run_coroutine_threadsafe(message, self.bot.loop)
             fut.result()
 
