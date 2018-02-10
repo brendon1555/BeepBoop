@@ -1,3 +1,4 @@
+import asyncio
 from datetime import datetime
 import logging
 import discord
@@ -21,7 +22,8 @@ EXTENSIONS = [
     'beepboop.cogs.fun',
     'beepboop.cogs.google',
     'beepboop.cogs.crypto',
-    'beepboop.cogs.lol'
+    'beepboop.cogs.lol',
+    'beepboop.cogs.spyfall'
 ]
 
 
@@ -30,7 +32,6 @@ async def on_ready():
     print('Logged in as:\n{0} (ID: {0.id})'.format(BOT.user))
     await BOT.change_presence(game=discord.Game(name='[Alpha %s]' % __version__))
     BOT.uptime = datetime.now()
-    BOT.game = None
     BOT.icount = BOT.command_count = 0
     BOT.session = aiohttp.ClientSession(loop=BOT.loop)
 
@@ -67,13 +68,25 @@ async def on_message(message):
     await BOT.process_commands(message)
 
 def main():
+    # add wakeup HACK
+    asyncio.async(wakeup())
+
     for extension in EXTENSIONS:
         try:
             BOT.load_extension(extension)
         except Exception as e:
             print('Failed to load extension {}\n{}: {}'.format(extension, type(e).__name__, e))
 
-    BOT.run(_CONFIG['api_key'])
+    try:
+        BOT.run(_CONFIG['api_key'])
+    except KeyboardInterrupt:
+        pass
+
+async def wakeup():
+    """async hack
+    """
+    while True:
+        await asyncio.sleep(1)
 
 if __name__ == "__main__":
     main()

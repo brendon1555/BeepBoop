@@ -30,36 +30,34 @@ class Utils(Base):
                 hours, minutes, seconds)
         )
 
-    @commands.check(Checks.is_owner)
+    @commands.has_role("Moderator")
     @commands.command(hidden=True)
     async def say(self, ctx, *, message: str):
         """Ignore this"""
-        if ctx.message.author.id == 141480928995311616:
+        summoned_channel = ctx.message.author.voice.channel
+        if summoned_channel is not None:
+            tts = gTTS(text=message, lang='en')
+            tts.save(os.path.join(self.audio_directory, "tts.mp3"))
 
-            summoned_channel = ctx.message.author.voice.channel
-            if summoned_channel is not None:
-                tts = gTTS(text=message, lang='en')
-                tts.save(os.path.join(self.audio_directory, "tts.mp3"))
+            vc = ctx.guild.voice_client
+            if vc is None:
+                await ctx.invoke(self.bot.get_cog("Music").voice_connect)
+                if not ctx.guild.voice_client:
+                    return
+                else:
+                    vc = ctx.guild.voice_client
 
-                vc = ctx.guild.voice_client
-                if vc is None:
-                    await ctx.invoke(self.bot.get_cog("Music").voice_connect)
-                    if not ctx.guild.voice_client:
-                        return
-                    else:
-                        vc = ctx.guild.voice_client
+            try:
+                source = PCMVolumeTransformer(FFmpegPCMAudio(os.path.join(
+                    self.audio_directory, 'tts.mp3'
+            )), volume=1)
+                vc.play(source, after=lambda x: self.__leave(ctx))
+            except Exception as e:
+                fmt = 'An error occurred while processing this request: ```py\n{}: {}\n```'
+                await ctx.send(fmt.format(type(e).__name__, e))
 
-                try:
-                    source = PCMVolumeTransformer(FFmpegPCMAudio(os.path.join(
-                        self.audio_directory, 'tts.mp3'
-                    )), volume=0.2)
-                    vc.play(source, after=lambda x: self.__leave(ctx))
-                except Exception as e:
-                    fmt = 'An error occurred while processing this request: ```py\n{}: {}\n```'
-                    await ctx.send(fmt.format(type(e).__name__, e))
-
-            else:
-                await ctx.send("I need you in a Voice Channel to hear me")
+        else:
+            await ctx.send("I need you in a Voice Channel to hear me")
 
     def __leave(self, ctx):
         try:
@@ -86,9 +84,6 @@ class Utils(Base):
         else:
             time = '%s hours, %s minutes, and %s seconds' % (
                 hours, minutes, seconds)
-        # game = self.bot.game
-        # if not game:
-        #     game = 'None'
         channel_count = 0
         for guild in self.bot.guilds:
             channel_count += len(guild.channels)
@@ -99,42 +94,13 @@ class Utils(Base):
                          value=str(self.bot.icount))
             em.add_field(name=u'\U0001F4E5 Cmds received',
                          value=str(self.bot.command_count))
-            # em.add_field(name=u'\u2757 Mentions', value=str(self.bot.mention_count))
             em.add_field(name=u'\u2694 Servers',
                          value=str(len(self.bot.guilds)))
             em.add_field(name=u'\ud83d\udcd1 Channels',
                          value=str(channel_count))
-            # em.add_field(name=u'\u270F Keywords logged', value=str(self.bot.keyword_log))
-            # g = u'\U0001F3AE Game'
-            # if '=' in game: g = '\ud83c\udfa5 Stream'
-            # em.add_field(name=g, value=game)
             mem_usage = '{:.2f} MiB'.format(__import__(
                 'psutil').Process().memory_full_info().uss / 1024 ** 2)
             em.add_field(name=u'\U0001F4BE Memory usage:', value=mem_usage)
-            # try:
-            #     g = git.cmd.Git(working_dir=os.getcwd())
-            #     branch = g.execute(["git", "rev-parse", "--abbrev-ref", "HEAD"])
-            #     g.execute(["git", "fetch", "origin", branch])
-            #     version = g.execute(["git", "rev-list", "--right-only", "--count", "{}...origin/{}".format(branch, branch)])
-            #     if branch == "master":
-            #         branch_note = "."
-            #     else:
-            #         branch_note = " (`" + branch + "` branch)."
-            #     if version == '0':
-            #         status = 'Up to date%s' % branch_note
-            #     else:
-            #         latest = g.execute(
-            #             ["git", "log", "--pretty=oneline", "--abbrev-commit", "--stat", "--pretty", "-%s" % version,
-            #              "origin/%s" % branch])
-            #         gist_latest = PythonGists.Gist(description='Latest changes for the selfbot.', content=latest,
-            #                                        name='latest.txt')
-            #         if version == '1':
-            #             status = 'Behind by 1 release%s [Latest update.](%s)' % (branch_note, gist_latest)
-            #         else:
-            #             status = '%s releases behind%s [Latest updates.](%s)' % (version, branch_note, gist_latest)
-            #     em.add_field(name=u'\U0001f4bb Update status:', value=status)
-            # except:
-            #     pass
             await ctx.send(embed=em)
         else:
             msg = '**Bot Stats:** ```Uptime: %s\nMessages Sent: %s\nMessages Received: %s\nMentions: %s\nServers: %s```' % (
@@ -152,11 +118,6 @@ class Utils(Base):
         for i in guild_ctx.members:
             if str(i.status) == 'online' or str(i.status) == 'idle' or str(i.status) == 'dnd':
                 online += 1
-        all_users = []
-        for user in guild_ctx.members:
-            all_users.append('{}#{}'.format(user.name, user.discriminator))
-        all_users.sort()
-        all_ = '\n'.join(all_users)
 
         channel_count = 0
         for channel in guild_ctx.channels:
@@ -180,9 +141,6 @@ class Utils(Base):
                          value=guild_ctx.role_hierarchy[0])
             em.add_field(name='Number of roles', value=str(role_count))
             em.add_field(name='Number of emotes', value=str(emoji_count))
-            # url = PythonGists.Gist(description='All Users in: %s' % server_ctx.name, content=str(all_), name='server.txt')
-            # gist_of_users = '[List of all {} users in this server]({})'.format(server_ctx.member_count, url)
-            # em.add_field(name='Users', value=gist_of_users)
             em.add_field(name='Created At', value=guild_ctx.created_at.__format__(
                 '%A, %d. %B %Y @ %H:%M:%S'))
             em.set_thumbnail(url=guild_ctx.icon_url)
@@ -232,7 +190,6 @@ class Utils(Base):
             utils = []
             for i in self.bot.extensions:
                 utils.append(i)
-            fail = False
             l = len(utils)
             for i in utils:
                 self.bot.unload_extension(i)
@@ -242,7 +199,6 @@ class Utils(Base):
                     await ctx.send(
                         'Failed to reload module `{}` ``` {}: {} ```'.format(i, type(e).__name__, e)
                     )
-                    fail = True
                     l -= 1
             await ctx.send('Reloaded {} of {} modules.'.format(l, len(utils)))
 
@@ -300,6 +256,15 @@ class Utils(Base):
             emoji_list.append(emoji_string)
 
         pprint(emoji_list)
+
+
+    @commands.check(Checks.is_owner)
+    @commands.command(pass_context=True)
+    async def roles(self, ctx):
+        for role in ctx.guild.roles:
+            print(role.name)
+            print(role.id)
+            print("------")
 
 def setup(bot):
     bot.add_cog(Utils(bot))

@@ -50,10 +50,10 @@ class Lol(Base):
 
     @lol.command()
     async def status(self, ctx):
-        status = self.cass.get_status(region="OCE")
+        lol_status = self.cass.get_status(region="OCE")
         em = Embed(color=0xea7938)
-        em.add_field(name='Name', value=status.name, inline=False)
-        for service in status.services:
+        em.add_field(name='Name', value=lol_status.name, inline=False)
+        for service in lol_status.services:
             em.add_field(name=service.name, value=service.status)
         await ctx.send(embed=em)
 
