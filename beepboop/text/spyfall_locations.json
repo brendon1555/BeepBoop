@@ -1,254 +1,254 @@
 {
-    "airplane": [
-        "first class passenger",
-        "air marshall",
-        "mechanic",
-        "air hostess",
-        "copilot",
-        "captain",
-        "economy class passenger"
+    "Airplane": [
+        "First Class Passenger",
+        "Air Marshall",
+        "Mechanic",
+        "Air Hostess",
+        "Copilot",
+        "Captain",
+        "Economy Class Passenger"
     ],
-    "bank": [
-        "armored car driver",
-        "manager",
-        "consultant",
-        "robber",
-        "security guard",
-        "teller",
-        "customer"
+    "Bank": [
+        "Armored Car Driver",
+        "Manager",
+        "Consultant",
+        "Robber",
+        "Security Guard",
+        "Teller",
+        "Customer"
     ],
-    "beach": [
-        "beach waitress",
-        "kite surfer",
-        "lifeguard",
-        "thief",
-        "beach photographer",
-        "ice cream truck driver",
-        "beach goer"
+    "Beach": [
+        "Beach Waitress",
+        "Kite Surfer",
+        "Lifeguard",
+        "Thief",
+        "Beach Photographer",
+        "Ice Cream Truck Driver",
+        "Beach Goer"
     ],
-    "casino": [
-        "bartender",
-        "head security guard",
-        "bouncer",
-        "manager",
-        "hustler",
-        "dealer",
-        "gambler"
+    "Casino": [
+        "Bartender",
+        "Head Security Guard",
+        "Bouncer",
+        "Manager",
+        "Hustler",
+        "Dealer",
+        "Gambler"
     ],
-    "cathedral": [
-        "priest",
-        "beggar",
-        "sinner",
-        "tourist",
-        "sponsor",
-        "chorister",
+    "Cathedral": [
+        "Priest",
+        "Beggar",
+        "Sinner",
+        "Tourist",
+        "Sponsor",
+        "Chorister",
         "parishioner"
     ],
-    "circus tent": [
-        "acrobat",
-        "animal trainer",
-        "magician",
-        "fire eater",
-        "clown",
-        "juggler",
-        "visitor"
+    "Circus Tent": [
+        "Acrobat",
+        "Animal Trainer",
+        "Magician",
+        "Fire Eater",
+        "Clown",
+        "Juggler",
+        "Visitor"
     ],
-    "corporate party": [
-        "entertainer",
-        "manager",
-        "unwanted guest",
-        "owner",
-        "secretary",
-        "delivery boy",
-        "accountant"
+    "Corporate Party": [
+        "Entertainer",
+        "Manager",
+        "Unwanted Guest",
+        "Owner",
+        "Secretary",
+        "Delivery Boy",
+        "Accountant"
     ],
-    "crusader army": [
-        "monk",
-        "imprisoned saracen",
-        "servant",
-        "bishop",
-        "squire",
-        "archer",
-        "knight"
+    "Crusader Army": [
+        "Monk",
+        "Imprisoned Saracen",
+        "Servant",
+        "Bishop",
+        "Squire",
+        "Archer",
+        "Knight"
     ],
-    "day spa": [
-        "stylist",
-        "masseuse",
-        "manicurist",
-        "makeup artist",
-        "dermatologist",
-        "beautician",
-        "customer"
+    "Day Spa": [
+        "Stylist",
+        "Masseuse",
+        "Manicurist",
+        "Makeup Artist",
+        "Dermatologist",
+        "Beautician",
+        "Customer"
     ],
-    "embassy": [
-        "security guard",
-        "secretary",
-        "ambassador",
-        "tourist",
-        "refugee",
-        "diplomat",
-        "government official"
+    "Embassy": [
+        "Security Guard",
+        "Secretary",
+        "Ambassador",
+        "Tourist",
+        "Refugee",
+        "Diplomat",
+        "Government Official"
     ],
-    "hospital": [
-        "nurse",
-        "doctor",
-        "anesthesiologist",
-        "intern",
-        "therapist",
-        "surgeon",
-        "patient"
+    "Hospital": [
+        "Nurse",
+        "Doctor",
+        "Anesthesiologist",
+        "Intern",
+        "Therapist",
+        "Surgeon",
+        "Patient"
     ],
-    "hotel": [
-        "doorman",
-        "security guard",
-        "manager",
-        "housekeeper",
-        "bartender",
-        "bellman",
-        "customer"
+    "Hotel": [
+        "Doorman",
+        "Security Guard",
+        "Manager",
+        "Housekeeper",
+        "Bartender",
+        "Bellman",
+        "Customer"
     ],
-    "military base": [
-        "deserter",
-        "colonel",
-        "medic",
-        "sniper",
-        "officer",
-        "tank engineer",
-        "soldier"
+    "Military Base": [
+        "Deserter",
+        "Colonel",
+        "Medic",
+        "Sniper",
+        "Officer",
+        "Tank Engineer",
+        "Soldier"
     ],
-    "movie studio": [
-        "stunt man",
-        "sound engineer",
-        "camera man",
-        "director",
-        "costume artist",
-        "producer",
-        "actor"
+    "Movie Studio": [
+        "Stunt Man",
+        "Sound Engineer",
+        "Camera Man",
+        "Director",
+        "Costume Artist",
+        "Producer",
+        "Actor"
     ],
-    "ocean liner": [
-        "cook",
-        "captain",
-        "bartender",
-        "musician",
-        "waiter",
-        "mechanic",
-        "rich passenger"
+    "Ocean Liner": [
+        "Cook",
+        "Captain",
+        "Bartender",
+        "Musician",
+        "Waiter",
+        "Mechanic",
+        "Rich Passenger"
     ],
-    "passenger train": [
-        "mechanic",
-        "border patrol",
-        "train attendant",
-        "restaurant chef",
-        "train driver",
-        "stoker",
-        "passenger"
+    "Passenger Train": [
+        "Mechanic",
+        "Border Patrol",
+        "Train Attendant",
+        "Restaurant Chef",
+        "Train Driver",
+        "Stoker",
+        "Passenger"
     ],
-    "pirate ship": [
-        "cook",
-        "slave",
-        "cannoneer",
-        "tied up prisoner",
-        "cabin boy",
-        "brave captain",
-        "sailor"
+    "Pirate Ship": [
+        "Cook",
+        "Slave",
+        "Cannoneer",
+        "Tied Up Prisoner",
+        "Cabin Boy",
+        "Brave Captain",
+        "Sailor"
     ],
-    "polar station": [
-        "medic",
-        "expedition leader",
-        "biologist",
-        "radioman",
-        "hydrologist",
-        "meteorologist",
-        "geologist"
+    "Polar Station": [
+        "Medic",
+        "Expedition Leader",
+        "Biologist",
+        "Radioman",
+        "Hydrologist",
+        "Meteorologist",
+        "Geologist"
     ],
-    "police station": [
-        "detective",
-        "lawyer",
-        "journalist",
-        "criminalist",
-        "archivist",
-        "criminal",
-        "patrol officer"
+    "Police Station": [
+        "Detective",
+        "Lawyer",
+        "Journalist",
+        "Criminalist",
+        "Archivist",
+        "Criminal",
+        "Patrol Officer"
     ],
-    "restaurant": [
-        "musician",
-        "bouncer",
-        "hostess",
-        "head chef",
-        "food critic",
-        "waiter",
-        "customer"
+    "Restaurant": [
+        "Musician",
+        "Bouncer",
+        "Hostess",
+        "Head Chef",
+        "Food Critic",
+        "Waiter",
+        "Customer"
     ],
-    "school": [
-        "gym teacher",
-        "principal",
-        "security guard",
-        "janitor",
-        "cafeteria lady",
-        "maintenance man",
-        "student"
+    "School": [
+        "Gym Teacher",
+        "Principal",
+        "Security Guard",
+        "Janitor",
+        "Cafeteria Lady",
+        "Maintenance Man",
+        "Student"
     ],
-    "service station": [
-        "manager",
-        "tire specialist",
-        "biker",
-        "car owner",
-        "car wash operator",
-        "electrician",
-        "auto mechanic"
+    "Service Station": [
+        "Manager",
+        "Tire Specialist",
+        "Biker",
+        "Car Owner",
+        "Car Wash Operator",
+        "Electrician",
+        "Auto Mechanic"
     ],
-    "space station": [
-        "engineer",
-        "alien",
-        "pilot",
-        "commander",
-        "scientist",
-        "doctor",
-        "space tourist"
+    "Space Station": [
+        "Engineer",
+        "Alien",
+        "Pilot",
+        "Commander",
+        "Scientist",
+        "Doctor",
+        "Space Tourist"
     ],
-    "submarine": [
-        "cook",
-        "commander",
-        "sonar technician",
-        "electronics technician",
-        "radioman",
-        "navigator",
-        "sailor"
+    "Submarine": [
+        "Cook",
+        "Commander",
+        "Sonar Technician",
+        "Electronics Technician",
+        "Radioman",
+        "Navigator",
+        "Sailor"
     ],
-    "supermarket": [
-        "cashier",
-        "butcher",
-        "janitor",
-        "security guard",
-        "food sample demonstrator",
-        "shelf stocker",
-        "customer"
+    "Supermarket": [
+        "Cashier",
+        "Butcher",
+        "Janitor",
+        "Security Guard",
+        "Food Sample Demonstrator",
+        "Shelf Stocker",
+        "Customer"
     ],
-    "theater": [
-        "coat check lady",
-        "prompter",
-        "cashier",
-        "director",
-        "actor",
-        "crew man",
-        "audience member"
+    "Theater": [
+        "Coat Check Lady",
+        "Prompter",
+        "Cashier",
+        "Director",
+        "Actor",
+        "Crew Man",
+        "Audience Member"
     ],
-    "university": [
-        "graduate student",
-        "professor",
-        "dean",
-        "psychologist",
-        "maintenance man",
-        "janitor",
-        "student"
+    "University": [
+        "Graduate Student",
+        "Professor",
+        "Dean",
+        "Psychologist",
+        "Maintenance Man",
+        "Janitor",
+        "Student"
     ],
-    "world war ii squad": [
-        "resistance fighter",
-        "radioman",
-        "scout",
-        "medic",
-        "cook",
-        "imprisoned nazi",
-        "soldier"
+    "World War II Squad": [
+        "Resistance Fighter",
+        "Radioman",
+        "Scout",
+        "Medic",
+        "Cook",
+        "Imprisoned Nazi",
+        "Soldier"
     ]
 }

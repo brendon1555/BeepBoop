@@ -6,7 +6,7 @@ import asyncio
 import copy
 from datetime import datetime
 from discord.ext import commands
-from discord import Embed
+from discord import Embed, utils
 from beepboop.base import Base, Checks
 
 
@@ -49,11 +49,9 @@ class Spyfall(Base):
     async def _assign_roles(self):
         """Step three
         """
-        print("assigning roles")
         self.spy = random.choice(list(self.players.keys()))
         role_list_clone = copy.copy(list(self._game_data[self.location]))
         for player in self.players.keys():
-            print(player)
             if player is not self.spy:
                 if len(role_list_clone) == 0:
                     role_list_clone = copy.copy(list(self._game_data[self.location]))
@@ -91,7 +89,7 @@ class Spyfall(Base):
             await ctx.send("Game is not active. {}".format(current_players))
 
     @sf.command(name='start')
-    async def start_game(self, ctx):
+    async def start_game(self, ctx, time: int = None):
         if len(self.players) < 1:
             await ctx.send("Cannot start with less than 3 players!")
             return
@@ -105,12 +103,17 @@ class Spyfall(Base):
         self._assign_location()
         await self._assign_roles()
         self.game_running = True
+        if time is None:
+            time = 15
+        self.game_timer = self.bot.loop.call_later(time*60, lambda: asyncio.ensure_future(ctx.invoke(self.end_game), loop=self.bot.loop))
+
 
     @sf.command(name='end')
     async def end_game(self, ctx):
         if self.game_running:
             end_time = datetime.now()
             await ctx.send("Game ended! Game lasted {} minutes.".format(math.floor((end_time-self.start_time).seconds/60)))
+            await ctx.send(f"{self.spy.mention} was the Spy!")
             self.game_running = False
             self.purge()
         else:
@@ -143,14 +146,35 @@ class Spyfall(Base):
             await ctx.send("Cannot leave an active game")
         
         if ctx.author not in self.players:
-            return "You're not in the game!"
+            await ctx.send("You're not in the game!")
+            return
+        
         self.players.pop(ctx.author, None)
         await ctx.send("Removed {} from the game!".format(ctx.author.mention))
 
+    @commands.has_any_role("Moderator", "Admin")
+    @sf.command(name='kick')
+    async def kick_player(self, ctx, name):
+        if self.game_running:
+            await ctx.send("Cannot kick from an active game")
+            return
+
+        player_to_kick = utils.get(ctx.guild.members, name=name)
+
+        if player_to_kick is None:
+            await ctx.send(f"{name} is not a valid User.")
+            return
+        
+        if player_to_kick not in self.players:
+            await ctx.send("That user is not in the game!")
+            return
+
+        self.players.pop(player_to_kick, None)
+        await ctx.send(f"Removed {player_to_kick.mention} from the game!")
+
     @sf.command(name='locations')
     async def locations(self, ctx):
-        locations_title_case = [title.title() for title in self._game_data.keys()]
-        await ctx.send("Locations:\n{}".format("\n".join(locations_title_case)))
+        await ctx.send("Locations:\n{}".format("\n".join(self._game_data.keys())))
 
 
 def setup(bot):
