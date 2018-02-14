@@ -92,11 +92,38 @@ class Fun(Base):
                     vc = ctx.guild.voice_client
             else:
                 if ctx.author not in vc.channel.members:
-                    return await ctx.send(f'You must be in **{vc.channel}** to request songs.', delete_after=30)
+                    return await ctx.send(f'You must be in **{vc.channel}** to request mlg.', delete_after=30)
 
             try:
                 source = PCMVolumeTransformer(FFmpegPCMAudio(os.path.join(
                         self.audio_directory, 'mlg_airhorn.mp3'
+                    )), volume=0.2)
+                vc.play(source, after=lambda x: self.leave(ctx))
+            except Exception as e:
+                fmt = 'An error occurred while processing this request: ```py\n{}: {}\n```'
+                await ctx.send(
+                    fmt.format(type(e).__name__, e)
+                )
+
+    @commands.command()
+    async def yeet(self, ctx):
+        summoned_channel = ctx.message.author.voice.channel
+        if summoned_channel is not None:
+            vc = ctx.guild.voice_client
+
+            if vc is None:
+                await ctx.invoke(self.bot.get_cog("Music").voice_connect)
+                if not ctx.guild.voice_client:
+                    return
+                else:
+                    vc = ctx.guild.voice_client
+            else:
+                if ctx.author not in vc.channel.members:
+                    await ctx.send(f'You must be in **{vc.channel}** to request yeet.', delete_after=30)
+
+            try:
+                source = PCMVolumeTransformer(FFmpegPCMAudio(os.path.join(
+                        self.audio_directory, 'yeet.mp3'
                     )), volume=0.2)
                 vc.play(source, after=lambda x: self.leave(ctx))
             except Exception as e:

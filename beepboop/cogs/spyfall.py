@@ -24,6 +24,7 @@ class Spyfall(Base):
         self.location_list = []
         self.game_running = False
         self.start_time = None
+        self.channel = None
 
         self._load_data()
 
@@ -73,6 +74,10 @@ class Spyfall(Base):
         self.votes = {}
         self.location = None
         self.spy = None
+
+        if self.game_timer:
+            self.game_timer.cancel()
+
     
     @commands.group()
     async def sf(self, ctx):
@@ -95,6 +100,7 @@ class Spyfall(Base):
             return
 
         self.start_time = datetime.now()
+        self.channel = ctx.channel
         starting_player = random.choice(list(self.players.keys()))
         await ctx.send("Attention {} !".format(" ".join([player.mention for player in self.players.keys()])))
         await ctx.send("Starting game with {} players! Majority is {} votes.\nFirst Up: {}.".format(
@@ -159,7 +165,7 @@ class Spyfall(Base):
             await ctx.send("Cannot kick from an active game")
             return
 
-        player_to_kick = utils.get(ctx.guild.members, name=name)
+        player_to_kick = utils.get(ctx.guild.members, mention=name)
 
         if player_to_kick is None:
             await ctx.send(f"{name} is not a valid User.")
@@ -176,6 +182,94 @@ class Spyfall(Base):
     async def locations(self, ctx):
         await ctx.send("Locations:\n{}".format("\n".join(self._game_data.keys())))
 
+
+    @sf.command(name='vote')
+    async def vote(self, ctx, name):
+        if not self.game_running:
+            await ctx.send("Cannot vote when no game is active!")
+            return
+
+        if ctx.author not in self.players.keys():
+            await ctx.send(f"{ctx.author.mention}, you're not even playing...")
+            return
+
+        await ctx.invoke(self.unvote)
+
+        player_to_vote_for = utils.get(ctx.guild.members, mention=name)
+
+        voted = next(p for p in self.players if p == player_to_vote_for)
+
+        if voted:
+            try:
+                self.votes[voted].append(ctx.author)
+            except KeyError:
+                self.votes[voted] = []
+                self.votes[voted].append(ctx.author)
+            
+            voted_msg = f"{ctx.author.mention} has voted for {voted.mention}"
+
+            if len(self.votes[voted]) >= self.majority:
+                if voted is self.spy:
+                    await ctx.send(f"{voted_msg}\nThey were the spy!")
+                else:
+                    await ctx.send(f"{voted_msg}\nNope, they weren't the spy. Everyone but {self.spy.mention} loses!")
+
+                await ctx.invoke(self.end_game)
+            else:
+                await ctx.send(f"{voted_msg} (That makes {len(self.votes[voted])} votes! {self.majority - len(self.votes[voted])} till majority)")
+            
+    @sf.command(name='unvote')
+    async def unvote(self, ctx, name):
+        if not self.game_running:
+            await ctx.send("Cannot vote when no game is active!")
+            return
+
+        if ctx.author not in self.players.keys():
+            await ctx.send(f"{ctx.author.mention}, you're not even playing...")
+            return
+
+        current_vote = None
+        for voted in self.votes.keys():
+            try:
+                idx = self.votes[voted].index(ctx.author)
+                self.votes[voted].pop(idx)
+                current_vote = voted
+                break
+            except ValueError:
+                pass
+
+        if current_vote:
+            await ctx.send(f"{ctx.author.mention} is no longer voting for {voted.mention}")
+        else:
+            await ctx.send(f"Cannot unvote, {ctx.author.mention} are not voting for anyone")
+
+    @sf.command(name='votes')
+    async def get_votes(self, ctx):
+        if not self.game_running:
+            await ctx.send("Game not started, cannot get votes")
+            return
+
+        text = f"Current Votes (Majority is {self.majority}):\n"
+        for player in sorted(self.votes.keys(), key=lambda x: len(self.votes[x]), reverse=True):
+            if len(self.votes[player]) > 0:
+                player_names = ",".join([p.username for p in self.votes[player]])
+                text += f"{player.mention} ({len(self.votes[player])}): {player_names}\n"
+        await ctx.send(text)
+
+    @sf.command(name='location')
+    async def declare_location(self, ctx, *, location):
+        if not location:
+            await ctx.send("Need to provide a location name")
+
+        if ctx.author != self.spy:
+            await ctx.author.send("You're not even the spy.")
+        else:
+            if self.location.lower() == location.lower():
+                await self.channel.send(f"{ctx.author.mention} was the spy. They have correctly declared the location as {self.location}\nThey win!")
+            else:
+                await self.channel.send(f"{ctx.author.mention} was the spy but they have incorrectly declared the location as {location}\nThey lose!")
+            await ctx.invoke(self.end_game)
+        
 
 def setup(bot):
     bot.add_cog(Spyfall(bot))

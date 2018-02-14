@@ -2,12 +2,13 @@ from setuptools import setup, find_packages
 from beepboop import __version__
 
 requirements = [
-    'discord.py[voice]',
+    # 'discord.py[voice]',
     'gtts',
     'giphypop',
     'psutil',
     'lxml',
     'coinmarketcap',
+    'cassiopeia',
     'cassiopeia-diskstore',
     'youtube_dl'
 ]
@@ -37,7 +38,7 @@ setup(name='beepboop',
       packages=find_packages(),
       zip_safe=False,
       install_requires=requirements,
-      dependency_links=['https://github.com/meraki-analytics/cassiopeia/tarball/master'],
+      dependency_links=['https://github.com/Rapptz/discord.py/tarball/rewrite'],
       platforms=['Any'],
       classifiers=[
           'Development Status :: 4 - Beta',
