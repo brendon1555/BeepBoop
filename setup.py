@@ -38,7 +38,7 @@ setup(name='beepboop',
       packages=find_packages(),
       zip_safe=False,
       install_requires=requirements,
-      dependency_links=['https://github.com/Rapptz/discord.py/tarball/rewrite'],
+      dependency_links=['https://github.com/Rapptz/discord.py/tarball/rewrite#egg=discord[voice]'],
       platforms=['Any'],
       classifiers=[
           'Development Status :: 4 - Beta',

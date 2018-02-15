@@ -123,7 +123,7 @@ class Fun(Base):
 
             try:
                 source = PCMVolumeTransformer(FFmpegPCMAudio(os.path.join(
-                        self.audio_directory, 'yeet.mp3'
+                        self.audio_directory, choice(['yeet.mp3', 'yeet2.mp3'])
                     )), volume=0.2)
                 vc.play(source, after=lambda x: self.leave(ctx))
             except Exception as e:

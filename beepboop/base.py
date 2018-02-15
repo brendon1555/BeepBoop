@@ -1,5 +1,6 @@
 import os
 import json
+from functools import wraps
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -39,3 +40,11 @@ class Checks:
             return True
 
         return False
+
+
+def typing(func):
+    @wraps(func)
+    async def wrapped(self, context, *args, **kwargs):
+        async with context.typing():
+            await func(self, context, *args, **kwargs)
+    return wrapped
