@@ -67,7 +67,7 @@ class Lol(Base):
             '{}'.format(champion.name)
             for champion in champions
         ])
-        await ctx.send('Valid Champion names:```{}```'.format(champions_text))
+        await ctx.send('Valid Champion names:```\n{}```'.format(champions_text))
 
 
     @lol.command()
@@ -205,6 +205,16 @@ class Lol(Base):
         em.set_thumbnail(url=summoner.profile_icon.url)
         await ctx.send(embed=em)
 
+    
+    @lol.command()
+    @typing
+    async def ftp(self, ctx):
+        champions = self.cass.Champions(region="OCE").search(True)
+        champions_text = '\n'.join([
+            '{}'.format(champion.name)
+            for champion in champions
+        ])
+        await ctx.send('Free to play:```\n{}```'.format(champions_text))
 
 
 def setup(bot):
