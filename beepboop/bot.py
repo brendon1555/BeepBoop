@@ -30,7 +30,7 @@ EXTENSIONS = [
 @BOT.event
 async def on_ready():
     print('Logged in as:\n{0} (ID: {0.id})'.format(BOT.user))
-    await BOT.change_presence(game=discord.Game(name='[Alpha %s]' % __version__))
+    await BOT.change_presence(activity=discord.Game(name='[Alpha %s]' % __version__))
     BOT.uptime = datetime.now()
     BOT.icount = BOT.command_count = 0
     BOT.session = aiohttp.ClientSession(loop=BOT.loop)
