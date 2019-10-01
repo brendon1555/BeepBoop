@@ -1,24 +1,19 @@
 import os
 import json
 from functools import wraps
+from discord.ext import commands
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-with open('config.json') as conf:
-    _CONFIG = json.load(conf)
-
-with open('summoners.json') as summoners:
-    _SUMMONERS = json.load(summoners)
 
 _AUDIO_DIRECTORY = os.path.join(os.path.dirname(__file__), 'audio')
 _TEXT_DIRECTORY = os.path.join(os.path.dirname(__file__), 'text')
 
-class Base(object):
+class Base(commands.Cog):
 
     def __init__(self):
         self.audio_directory = _AUDIO_DIRECTORY
         self.text_directory = _TEXT_DIRECTORY
-        self.config = _CONFIG
 
     @staticmethod
     async def cleanup(the_bot, message):
@@ -32,11 +27,7 @@ class Base(object):
 class Checks:
     @staticmethod
     def is_owner(ctx):
-        print("here")
-        print(ctx.message.author.id)
-        print(_CONFIG['owner_id'])
-        print(ctx.message.author.id == _CONFIG['owner_id'])
-        if ctx.message.author.id == _CONFIG['owner_id']:
+        if ctx.message.author.id == ctx.bot.config['owner_id']:
             return True
 
         return False

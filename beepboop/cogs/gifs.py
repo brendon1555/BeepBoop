@@ -1,6 +1,6 @@
 from discord.ext import commands
 import giphypop
-from beepboop.base import Base, _CONFIG
+from beepboop.base import Base
 
 
 class Gifs(Base):
@@ -8,7 +8,7 @@ class Gifs(Base):
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
-        self.giphy = giphypop.Giphy(api_key=_CONFIG['giphy_api_key'])
+        self.giphy = giphypop.Giphy(api_key=self.bot.config['giphy_api_key'])
 
     @commands.command()
     async def cat(self, ctx):

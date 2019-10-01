@@ -6,7 +6,7 @@ from beepboop.base import Base
 class Crypto(Base):
 
     def __init__(self, bot):
-        super().__init__()
+        super().__init__(bot)
         self.bot = bot
         self.market = Market()
 

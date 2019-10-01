@@ -3,7 +3,7 @@ clean:
 	@echo "all clear! start re-buidling :)"
 
 deploy:
-	scp dist/*gz brendon@carbon.brendon1555.com:/home/brendon/BeepBoop/
+	scp dist/*gz brendon@172.104.60.184:/home/brendon/BeepBoop/
 
 dist:
 	python setup.py clean

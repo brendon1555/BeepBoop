@@ -129,7 +129,7 @@ class MusicEntry:
         self.query = query
 
         
-class Music:
+class Music(commands.Cog):
     """Music Cog containing various commands for playing music.
     This cog supports cross guild music playing and implements a queue for playlists."""
 

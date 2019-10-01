@@ -5,7 +5,7 @@ from discord import Embed
 import cassiopeia
 from cassiopeia.data import Queue
 import datapipelines
-from beepboop.base import typing, Base, _CONFIG, _SUMMONERS
+from beepboop.base import typing, Base
 
 
 CHAMPION_EMOJIS, SPELL_EMOJIS, BDT_EMOJIS = {}, {}, {}
@@ -15,14 +15,7 @@ QueueStrings = {
     Queue.ranked_solo_fives: "Ranked Solo", 
     Queue.ranked_flex_fives: "Ranked Flex", 
     Queue.normal_draft_fives: "Draft", 
-    Queue.blind_fives: "Blind", 
-    Queue.depreciated_blind_fives: "Blind", 
-    Queue.depreciated_draft_fives: "Draft", 
-    Queue.depreciated_ranked_solo_fives: "Ranked Solo", 
-    Queue.depreciated_ranked_premade_fives: "Ranked Premade", 
-    Queue.depreciated_ranked_team_fives: "Ranked Team",
-    Queue.depreciated_team_builder_fives: "Ranked Team Builder",
-    Queue.depreciated_ranked_fives: "Ranked"
+    Queue.blind_fives: "Blind"
 }
 
 
@@ -32,14 +25,14 @@ class Lol(Base):
         super().__init__()
         self.bot = bot
         self.cass = cassiopeia
-        self.cass.apply_settings(_CONFIG['cassiopeia'])
-        self.summoners = _SUMMONERS
+        self.cass.apply_settings(self.bot.config['cassiopeia'])
+        self.summoners = self.bot.summoners
 
-        for key, value in _CONFIG['emojis']['champions']['id'].items():
+        for key, value in self.bot.config['emojis']['champions']['id'].items():
             CHAMPION_EMOJIS[int(key)] = value
-        for key, value in _CONFIG['emojis']['spells']['id'].items():
+        for key, value in self.bot.config['emojis']['spells']['id'].items():
             SPELL_EMOJIS[int(key)] = value
-        for color, symbols in _CONFIG['emojis']['bdt'].items():
+        for color, symbols in self.bot.config['emojis']['bdt'].items():
             for symbol, value in symbols.items():
                 BDT_EMOJIS[color[0] + symbol[0]] = value
 
@@ -132,14 +125,7 @@ class Lol(Base):
             Queue.ranked_solo_fives, 
             Queue.ranked_flex_fives, 
             Queue.normal_draft_fives, 
-            Queue.blind_fives, 
-            Queue.depreciated_blind_fives, 
-            Queue.depreciated_draft_fives, 
-            Queue.depreciated_ranked_solo_fives, 
-            Queue.depreciated_ranked_premade_fives, 
-            Queue.depreciated_ranked_team_fives,
-            Queue.depreciated_team_builder_fives,
-            Queue.depreciated_ranked_fives
+            Queue.blind_fives
         }
 
         # Overall last 10 games

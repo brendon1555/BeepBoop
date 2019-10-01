@@ -1,18 +1,18 @@
+import os
 import asyncio
 from datetime import datetime
 import logging
 import discord
 from discord.ext import commands
 import aiohttp
+import traceback
+import sys
+import json
 from beepboop import __version__
-from beepboop.base import _CONFIG
 
-# import signal
-# signal.signal(signal.SIGINT, signal.SIG_DFL)
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 logging.basicConfig(level=logging.WARNING)
-
-BOT = commands.Bot(command_prefix=commands.when_mentioned_or('!!'), description='Beep Boop')
 
 EXTENSIONS = [
     'beepboop.cogs.gifs',
@@ -21,72 +21,73 @@ EXTENSIONS = [
     'beepboop.cogs.utils',
     'beepboop.cogs.fun',
     'beepboop.cogs.google',
-    'beepboop.cogs.crypto',
-    'beepboop.cogs.lol',
+    # 'beepboop.cogs.crypto',
+    # 'beepboop.cogs.lol',
     'beepboop.cogs.spyfall'
 ]
 
+class BeepBoop(commands.Bot):
+    def __init__(self):
+        super().__init__(command_prefix='!!', description='Beep Boop', activity=discord.Game(name='[Alpha %s]' % __version__))
+        self.session = aiohttp.ClientSession(loop=self.loop)
 
-@BOT.event
-async def on_ready():
-    print('Logged in as:\n{0} (ID: {0.id})'.format(BOT.user))
-    await BOT.change_presence(activity=discord.Game(name='[Alpha %s]' % __version__))
-    BOT.uptime = datetime.now()
-    BOT.icount = BOT.command_count = 0
-    BOT.session = aiohttp.ClientSession(loop=BOT.loop)
+        with open('config.json', 'r') as conf:
+            self.config = json.load(conf)
 
-# @BOT.event
-# async def on_command_error(error, ctx):
-#     if isinstance(error, commands.errors.MissingRequiredArgument):
-#         formatter = commands.formatter.HelpFormatter()
-#         await BOT.send_message(
-#             ctx.message.channel, 
-#             "{} You are missing required arguments.\n{}".format(
-#                 ctx.message.author.mention, 
-#                 formatter.format_help_for
-#                 (ctx, ctx.command)[0]
-#             )
-#         )
+        self.token = self.config["token"]
+
+        for extension in EXTENSIONS:
+            try:
+                self.load_extension(extension)
+            except Exception as e:
+                print('Failed to load extension {}\n{}: {}'.format(extension, type(e).__name__, e))
+
+    async def on_command_error(self, ctx, error):
+        if isinstance(error, commands.NoPrivateMessage):
+            await ctx.author.send('This command cannot be used in private messages.')
+        elif isinstance(error, commands.DisabledCommand):
+            await ctx.author.send('Sorry. This command is disabled and cannot be used.')
+        elif isinstance(error, commands.CommandInvokeError):
+            print(f'In {ctx.command.qualified_name}:', file=sys.stderr)
+            traceback.print_tb(error.original.__traceback__)
+            print(
+                f'{error.original.__class__.__name__}: {error.original}', file=sys.stderr)
+
+    async def on_ready(self):
+        print('Logged in as:')
+        print('Username: ' + self.user.name)
+        print('ID: ' + str(self.user.id))
+        print('------')
+        self.uptime = datetime.now()
+        self.icount = self.command_count = 0
 
 
-@BOT.event
-async def on_member_join(member):
-    guild = member.guild
-    fmt = '{} who dis?!'
-    await guild.send(fmt.format(member.mention))
+    async def on_message(self, message):
+        if message.author.id == self.user.id:
+            if hasattr(self, 'icount'):
+                self.icount += 1
+        elif message.content.startswith('!!'):
+            self.command_count += 1
 
+        await self.process_commands(message)
 
-@BOT.event
-async def on_message(message):
+    # async def on_member_join(self, member):
+    #     guild = member.guild
+    #     fmt = '{} who dis?!'
+    #     await guild.send(fmt.format(member.mention))
+    
+    async def close(self):
+        await super().close()
+        await self.session.close()
 
-    if message.author.id == BOT.user.id:
-        if hasattr(BOT, 'icount'):
-            BOT.icount += 1
-    elif message.content.startswith('!!'):
-        BOT.command_count += 1
+    def run(self):
+        super().run(self.token, reconnect=True)
 
-    await BOT.process_commands(message)
 
 def main():
-    # add wakeup HACK
-    asyncio.async(wakeup())
+    bot = BeepBoop()
+    bot.run()
 
-    for extension in EXTENSIONS:
-        try:
-            BOT.load_extension(extension)
-        except Exception as e:
-            print('Failed to load extension {}\n{}: {}'.format(extension, type(e).__name__, e))
 
-    try:
-        BOT.run(_CONFIG['api_key'])
-    except KeyboardInterrupt:
-        pass
-
-async def wakeup():
-    """async hack
-    """
-    while True:
-        await asyncio.sleep(1)
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

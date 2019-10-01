@@ -108,7 +108,8 @@ class Utils(Base):
                     self.bot.message_count), str(self.bot.mention_count),
                 str(len(self.bot.guilds)))
             await ctx.send(msg)
-        await ctx.message.delete()
+        if ctx.guild:
+            await ctx.message.delete()
 
     @commands.command()
     async def server(self, ctx):
@@ -174,7 +175,8 @@ class Utils(Base):
     @commands.command(hidden=True)
     async def reload(self, ctx, txt: str = None):
         """Reloads all modules."""
-        await ctx.message.delete()
+        if ctx.guild:
+            await ctx.message.delete()
         if txt:
             self.bot.unload_extension(txt)
             try:
@@ -206,7 +208,8 @@ class Utils(Base):
     @commands.command(pass_context=True)
     async def messagedump(self, ctx, limit, filename, details="yes", reverse="no"):
         """Dump messages."""
-        await ctx.message.delete()
+        if ctx.guild:
+            await ctx.message.delete()
         await ctx.send("Downloading messages...")
         if not os.path.isdir('message_dump'):
             os.mkdir('message_dump')

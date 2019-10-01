@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from beepboop import __version__
 
 requirements = [
-    # 'discord.py[voice]',
+    'discord.py[voice]',
     'gtts',
     'giphypop',
     'psutil',
